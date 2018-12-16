@@ -1349,7 +1349,7 @@ read_record_header:
     else
 #endif
     {
-        if( msg_len > MBEDTLS_SSL_IN_CONTENT_LEN )
+        if( msg_len > ssl->in_content_len )
         {
             MBEDTLS_SSL_DEBUG_MSG( 1, ( "bad client hello message" ) );
             return( MBEDTLS_ERR_SSL_BAD_HS_CLIENT_HELLO );

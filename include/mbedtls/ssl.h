@@ -1047,6 +1047,8 @@ struct mbedtls_ssl_config
     unsigned int cert_req_ca_list : 1;  /*!< enable sending CA list in
                                           Certificate Request messages?     */
 #endif
+
+    size_t ext_adv_content_len;
 };
 
 
@@ -1207,6 +1209,13 @@ struct mbedtls_ssl_context
     char own_verify_data[MBEDTLS_SSL_VERIFY_DATA_MAX_LEN]; /*!<  previous handshake verify data */
     char peer_verify_data[MBEDTLS_SSL_VERIFY_DATA_MAX_LEN]; /*!<  previous handshake verify data */
 #endif /* MBEDTLS_SSL_RENEGOTIATION */
+
+    size_t in_content_len;
+    size_t in_buffer_len;
+
+    size_t out_content_len;
+    size_t out_buffer_len;
+
 };
 
 #if defined(MBEDTLS_SSL_HW_RECORD_ACCEL)
@@ -1256,6 +1265,15 @@ int mbedtls_ssl_get_ciphersuite_id( const char *ciphersuite_name );
  * \param ssl      SSL context
  */
 void mbedtls_ssl_init( mbedtls_ssl_context *ssl );
+
+/**
+ * \brief         Initalize an SSL context with buffer size
+ *                Just makes the context ready for mbedtls_ssl_setup or
+ *                mbedtls_ssl_free() with a custom buffer size for this connection only
+ * 
+ * \param ssl     SSL context
+ */
+void mbedtls_ssl_init_in_out( mbedtls_ssl_context *ssl, size_t in, size_t out);
 
 /**
  * \brief          Set up an SSL context for use
@@ -3243,6 +3261,7 @@ void mbedtls_ssl_free( mbedtls_ssl_context *ssl );
  */
 void mbedtls_ssl_config_init( mbedtls_ssl_config *conf );
 
+
 /**
  * \brief          Load reasonnable default SSL configuration values.
  *                 (You need to call mbedtls_ssl_config_init() first.)
@@ -3260,6 +3279,26 @@ void mbedtls_ssl_config_init( mbedtls_ssl_config *conf );
  */
 int mbedtls_ssl_config_defaults( mbedtls_ssl_config *conf,
                                  int endpoint, int transport, int preset );
+
+
+/**
+ * \brief          Load reasonnable default SSL configuration values.
+ *                 (You need to call mbedtls_ssl_config_init() first.)
+ *
+ * \param conf     SSL configuration context
+ * \param endpoint MBEDTLS_SSL_IS_CLIENT or MBEDTLS_SSL_IS_SERVER
+ * \param transport MBEDTLS_SSL_TRANSPORT_STREAM for TLS, or
+ *                  MBEDTLS_SSL_TRANSPORT_DATAGRAM for DTLS
+ * \param preset   a MBEDTLS_SSL_PRESET_XXX value
+ * \param max_adv  the maximum size an in or out buffer can be.
+ *
+ * \note           See \c mbedtls_ssl_conf_transport() for notes on DTLS.
+ *
+ * \return         0 if successful, or
+ *                 MBEDTLS_ERR_XXX_ALLOC_FAILED on memory allocation error.
+ */
+int mbedtls_ssl_config_defaults_max_adv( mbedtls_ssl_config *conf,
+                                 int endpoint, int transport, int preset, size_t max_adv );
 
 /**
  * \brief          Free an SSL configuration context
