@@ -6891,8 +6891,8 @@ void mbedtls_ssl_init( mbedtls_ssl_context *ssl )
     memset( ssl, 0, sizeof( mbedtls_ssl_context ) );
     ssl->in_content_len = MBEDTLS_SSL_IN_CONTENT_LEN;
 
-    ssl->in_buffer_len = MBEDTLS_SSL_HEADER_LEN + MBEDTLS_SSL_IN_CONTENT_LEN;
-    ssl->out_buffer_len = MBEDTLS_SSL_HEADER_LEN + MBEDTLS_SSL_OUT_CONTENT_LEN;
+    ssl->in_buffer_len = MBEDTLS_SSL_PAYLOAD_OVERHEAD + MBEDTLS_SSL_IN_CONTENT_LEN;
+    ssl->out_buffer_len = MBEDTLS_SSL_PAYLOAD_OVERHEAD + MBEDTLS_SSL_OUT_CONTENT_LEN;
 }
 
 /*
@@ -6904,8 +6904,8 @@ void mbedtls_ssl_init_in_out( mbedtls_ssl_context *ssl, size_t in, size_t out)
     ssl->in_content_len = in;
     ssl->out_content_len = out;
 
-    ssl->in_buffer_len = MBEDTLS_SSL_HEADER_LEN + in;
-    ssl->out_buffer_len = MBEDTLS_SSL_HEADER_LEN + out;
+    ssl->in_buffer_len = MBEDTLS_SSL_PAYLOAD_OVERHEAD + in;
+    ssl->out_buffer_len = MBEDTLS_SSL_PAYLOAD_OVERHEAD + out;
 }
 
 /*
